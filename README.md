@@ -93,6 +93,9 @@ npx @metaengine/openapi-angular api.yaml ./src/app/api --include-tags users,auth
 # With httpResource (Angular 19.2+)
 npx @metaengine/openapi-angular api.yaml ./src/app/api --http-resource --inject-function
 
+# With lazy loading (trigger signal for on-demand resource loading)
+npx @metaengine/openapi-angular api.yaml ./src/app/api --lazy-resource --inject-function
+
 # Custom DI scope
 npx @metaengine/openapi-angular api.yaml ./src/app/api --provided-in any
 ```
@@ -110,8 +113,11 @@ npx @metaengine/openapi-angular api.yaml ./src/app/api --provided-in any
 | `--documentation` | Generate JSDoc comments | `false` |
 | `--inject-function` | Use inject() instead of constructor injection | `false` |
 | `--http-resource` | Use httpResource with Signals for GET operations (Angular 19.2+) | `false` |
+| `--lazy-resource` | Add trigger signal for lazy loading (implies `--http-resource`) | `false` |
+| `--date-transformation` | Convert date strings in responses to Date objects | `false` |
 | `--error-handling` | Enable smart error handling | `false` |
 | `--strict-validation` | Enable strict OpenAPI validation | `false` |
+| `--clean` | Remove files no longer part of generation while preserving unchanged files (smart VCS-friendly cleanup) | `false` |
 | `--verbose` | Enable verbose logging | `false` |
 | `--help, -h` | Show help message | - |
 
@@ -187,6 +193,59 @@ export class UserDetailsComponent {
   }
 }
 ```
+
+---
+
+## Lazy Loading with `--lazy-resource`
+
+By default, parameterless GET endpoints fire immediately because there are no signal dependencies.
+With `--lazy-resource`, all httpResource methods get an optional `trigger` signal parameter that
+controls when the resource loads:
+
+```bash
+npx @metaengine/openapi-angular api.yaml ./src/app/api --lazy-resource
+```
+
+```typescript
+// Parameterless endpoint — stays idle until trigger fires
+getAccountsResource(trigger?: Signal<unknown>): HttpResourceRef<Account[]> {
+  return httpResource<Account[]>(
+    () => {
+      if (trigger && trigger() === undefined) {
+        return undefined;
+      }
+      return { url: this.buildUrl(`/api/accounts`) };
+    },
+    { defaultValue: [] });
+}
+
+// Parameterized endpoint — trigger appended after existing params
+getUserByIdResource(id: Signal<number | undefined>, trigger?: Signal<unknown>): HttpResourceRef<User | undefined> {
+  return httpResource<User>(
+    () => {
+      const idValue = id();
+      if (trigger && trigger() === undefined) return undefined;
+      if (typeof idValue === 'undefined') return undefined;
+      return { url: this.buildUrl(`/api/users/${idValue}`) };
+    });
+}
+```
+
+**Usage — lazy load on demand:**
+```typescript
+export class AccountsComponent {
+  private loadTrigger = signal<unknown>(undefined);
+
+  // Resource stays idle until trigger fires
+  accountsResource = inject(AccountsService).getAccountsResource(this.loadTrigger);
+
+  onCompanySelected() {
+    this.loadTrigger.set(true);  // Triggers the HTTP request
+  }
+}
+```
+
+Without the trigger parameter (or when omitted), methods behave exactly as before.
 
 ---
 
