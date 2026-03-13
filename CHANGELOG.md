@@ -2,6 +2,19 @@
 
 See the [npm releases page](https://www.npmjs.com/package/@metaengine/openapi-angular?activeTab=versions) for detailed version history and changes.
 
+## 1.0.5
+
+### Bug Fixes
+- **Fixed: Optional path parameters leaving raw placeholders in URL** — When a parameter is marked as `in: query` in the OpenAPI spec but its name still appears as `{placeholder}` in the URL path (common with C# optional path parameters like `{param?}`), the placeholder is now correctly removed from the URL and the parameter is handled as a query parameter ([#2](https://github.com/meta-engine/openapi-angular/issues/2))
+- **Fixed: Cookie parameters incorrectly treated as query parameters** — Parameters with `in: cookie` are now properly filtered out instead of being silently mapped to query parameters
+
+### Improvements
+- **Style/Explode parameter serialization** — Added support for `explode: false` (comma-separated arrays) and `style: deepObject` (bracket notation like `?filter[name]=value`) query parameter serialization
+- **FormData/multipart support** — `multipart/form-data` request bodies now generate proper `FormData` handling with file and field support
+- **Binary and text/plain responses** — Full support for binary response types (`application/octet-stream`) and `text/plain` response content types
+- **ReadOnly/WriteOnly fields** — Proper support for OpenAPI `readOnly` and `writeOnly` field markers
+- **FreeForm to Dictionary** — Schemas with untyped `additionalProperties` are now correctly classified as `Record<string, unknown>` instead of opaque freeform objects
+
 ## 1.0.4
 
 - **New: `--lazy-resource` flag** — Adds an optional `trigger?: Signal<unknown>` parameter to all generated httpResource methods, enabling lazy loading patterns where resources stay idle until explicitly triggered
