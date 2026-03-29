@@ -2,6 +2,19 @@
 
 See the [npm releases page](https://www.npmjs.com/package/@metaengine/openapi-angular?activeTab=versions) for detailed version history and changes.
 
+## 1.0.7
+
+### Bug Fixes
+- **Fixed: `format: binary` properties mapped to `string` instead of `Blob`** — Multipart form-data file fields (C# `IFormFile`) now correctly generate as `Blob` in TypeScript interfaces. Since `File extends Blob`, both `File` objects from `<input type="file">` and programmatic `Blob` instances are accepted ([#4](https://github.com/meta-engine/openapi-angular/issues/4))
+- **Fixed: `instanceof Blob` check in FormData builder** — `Object.entries()` value typed as `unknown` so `instanceof Blob` works without type narrowing issues
+- **Fixed: httpResource URL path placeholders** — Unresolved path parameters (e.g. `{expiredOnly}`) in httpResource methods are now correctly handled via the shared URL template generator
+- **Fixed: false "Circular reference detected" comments on union types** — oneOf/union types no longer emit incorrect circular reference warnings
+
+### httpResource Improvements
+- **deepObject and explode:false query parameters** — httpResource methods now support `style: deepObject` (bracket notation) and `explode: false` (comma-separated arrays), matching Observable method behavior
+- **Header parameter support** — httpResource methods now include header parameters in the request object
+- **Skip binary/text response GETs** — httpResource methods are no longer generated for endpoints returning binary or text/plain responses, since Angular's `httpResource` API doesn't support `responseType` — Observable methods remain available for these
+
 ## 1.0.5
 
 ### Bug Fixes
