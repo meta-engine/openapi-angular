@@ -2,6 +2,19 @@
 
 See the [npm releases page](https://www.npmjs.com/package/@metaengine/openapi-angular?activeTab=versions) for detailed version history and changes.
 
+## 1.0.8
+
+### New Feature
+- **New: `--interceptors` flag** — Generates an `api-interceptors.ts` file with Angular-native HTTP interceptor infrastructure:
+  - `ApiMiddleware` type alias for `HttpInterceptorFn`
+  - `provideApiInterceptors(...interceptors)` factory that returns `EnvironmentProviders` for the Angular DI providers array
+
+### Bug Fixes
+- **Fixed: `Array<Blob>` FormData serialization corrupts binary data** — The generated FormData builder used `JSON.stringify()` on array fields, corrupting binary data. Now detects arrays via `Array.isArray()` and appends each element individually, matching standard multipart file upload behavior. Also fixes the model type mapping: `type: array` with `items: { format: binary }` now correctly generates `Array<Blob>` instead of `Array<string>` ([#5](https://github.com/meta-engine/openapi-angular/issues/5))
+- **Fixed: FormData `for...of` iteration causes TS2358** — `Object.entries(body)` returned a specific union type where `instanceof Blob` failed on primitive members. Added `[string, unknown]` cast to restore proper type narrowing
+- **Fixed: FormData indentation drift** — Switched from `forEach` callbacks to `for...of` loops; the `forEach(... => {` / `});` brace pattern caused the formatter to miscalculate indentation levels
+- **Fixed: discriminated unions without explicit `discriminator.mapping`** — When an OpenAPI schema uses `discriminator.propertyName` without a mapping object, the mapping is now inferred from `oneOf` `$ref` names per the OpenAPI 3.0 spec
+
 ## 1.0.7
 
 ### Bug Fixes
