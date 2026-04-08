@@ -2,6 +2,27 @@
 
 See the [npm releases page](https://www.npmjs.com/package/@metaengine/openapi-angular?activeTab=versions) for detailed version history and changes.
 
+## 1.0.9
+
+### Breaking / Default change
+- **`(integer, int64)` now generates `number` again** — 1.0.8 switched the default to `bigint` in the name of precision, but `number` is the more practical default: `JSON.parse` returns `number` anyway, and most APIs never cross `Number.MAX_SAFE_INTEGER` (2^53 − 1). If you need the full 64-bit range, opt in via `--type-mapping int64=bigint` ([#6](https://github.com/meta-engine/openapi-angular/issues/6))
+
+### New Feature
+- **New: `--type-mapping <slug=target>` flag** — Opt-in override for the TypeScript type emitted for a given OpenAPI `(type, format)` pair. Repeatable. Unknown slugs or targets are hard errors — no silent fallbacks.
+
+  | Slug | OpenAPI `(type, format)` | Default | Override |
+  |------|--------------------------|---------|----------|
+  | `int64` | `(integer, int64)` | `number` | `int64=bigint` |
+  | `decimal` | `(number, decimal)` | `number` | `decimal=string` |
+  | `date-time` | `(string, date-time)` | `Date` | `date-time=string` |
+  | `date` | `(string, date)` | `Date` | `date=string` |
+
+  ```bash
+  npx @metaengine/openapi-angular api.yaml ./src/app/api \
+    --type-mapping int64=bigint \
+    --type-mapping date-time=string
+  ```
+
 ## 1.0.8
 
 ### New Feature
