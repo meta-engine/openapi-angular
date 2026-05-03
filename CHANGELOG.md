@@ -2,6 +2,29 @@
 
 See the [npm releases page](https://www.npmjs.com/package/@metaengine/openapi-angular?activeTab=versions) for detailed version history and changes.
 
+## 1.1.0
+
+### Default changes
+- **Inline enums consolidated by default** — duplicate inline enum definitions are deduplicated and emitted as a single named type instead of repeating identical literal unions at each usage site
+- **Inline array-of-object items emitted as named types** — array properties whose items are inline object schemas now produce a named interface, e.g. `users: User[]` instead of `users: { id: number; ... }[]`
+- **Discriminator mapping literals pinned on union subtypes** — each subtype carries its discriminator value as a literal type so TypeScript narrows correctly when switching on the discriminator
+- **`@deprecated` JSDoc tags emitted regardless of `--documentation`** — deprecated types and properties always get the `@deprecated` tag so IDE tooling can warn even when JSDoc generation is otherwise off
+
+### `--interceptors` improvements
+When `--interceptors` is enabled, generated services drop the duplicate inline implementations for the cross-cutting concerns the interceptors already handle:
+- No inline `handleError<T>` body in the base service (handled by the error interceptor)
+- No `timeout(N)` pipe operator in service methods (handled by the timeout interceptor)
+- No empty `Authorization: ''` header placeholder (set by the bearer-auth interceptor)
+
+### Bug Fixes
+- **Fixed: `--http-resource` options leaking across schemas** — in projects with multiple OpenAPI schemas, options scoped to one schema no longer leak to others
+- **Fixed: `--date-transformation` empty no-op output** — when a schema has no date operations, the transformation utility is no longer emitted as an empty no-op
+- **Fixed: `--error-handling` widens nullable types twice** — nullable response types are no longer typed as `T | null | null`
+- **Fixed: JSDoc body asterisks aligned to column 3** — multi-line JSDoc inside service files now matches the canonical `* `-prefixed body alignment
+- **Fixed: multi-line JSDoc continuation prefixes** — wrapped JSDoc lines correctly start with ` * `, eliminating stray indentation
+- **Fixed: inline synthetic type names capped at 100 characters** — deeply nested inline schemas no longer produce overly long generated type names
+- **Fixed: discriminated union members dropping wire annotations** — inline `oneOf` members combined with a `discriminator` keep their wire-format annotations in the generated TypeScript
+
 ## 1.0.9
 
 ### Breaking / Default change
