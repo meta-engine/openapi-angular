@@ -2,6 +2,16 @@
 
 See the [npm releases page](https://www.npmjs.com/package/@metaengine/openapi-angular?activeTab=versions) for detailed version history and changes.
 
+## 1.3.1
+
+### Features
+- **New: `--service-decorator [scope]` flag** — emit Angular 22's `@Service()` decorator instead of `@Injectable` on generated services. `@Service()` is shorthand for `@Injectable({ providedIn: 'root' })`, so services stay root-provided singletons; it auto-enables `inject()`-based DI (the decorator requires it) and supersedes `--provided-in`. Pass `component-scoped` for `@Service({ autoProvided: false })` — a service you register yourself in a component/route `providers` array. Generated code imports the decorator as `NgService` (`import { Service as NgService }`) to avoid name collisions. Requires Angular 22+.
+
+  ```bash
+  npx @metaengine/openapi-angular api.yaml ./src/app/api --service-decorator
+  npx @metaengine/openapi-angular api.yaml ./src/app/api --service-decorator component-scoped
+  ```
+
 ## 1.2.1
 
 ### Features
