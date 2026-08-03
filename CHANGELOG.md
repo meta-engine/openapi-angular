@@ -2,6 +2,19 @@
 
 See the [npm releases page](https://www.npmjs.com/package/@metaengine/openapi-angular?activeTab=versions) for detailed version history and changes.
 
+## 1.4.1
+
+### Bug Fixes
+
+- Child schemas composed with `allOf` now preserve compatible inherited-property refinements. Making an inherited property required or refining its `$ref` to a more specific `allOf` subtype now emits the redeclared property instead of silently dropping it.
+- `--observe-response` now preserves the full Angular `HttpResponse` for binary and `text/plain` operations, including status and headers, rather than returning only the response body.
+
+## 1.4.0
+
+### Features
+
+- **New: `--observe-response` flag** — generated JSON operations return Angular `HttpResponse<T>`, allowing callers to access response status and headers.
+
 ## 1.3.1
 
 ### Features
