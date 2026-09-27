@@ -2,6 +2,18 @@
 
 See the [npm releases page](https://www.npmjs.com/package/@metaengine/openapi-angular?activeTab=versions) for detailed version history and changes.
 
+## 1.4.2
+
+### Bug Fixes
+
+- Models and enums referenced only by error responses are now generated, including when using `--include-tags`. All declared response statuses and media types participate in model discovery; no extra flag is required.
+- Inline error response bodies and their inherited `allOf` models are retained. Distinct error response shapes receive distinct model names, and inherited property refinements remain intact through nested compositions.
+- `--date-transformation` now converts response date properties in `--http-resource` and `--lazy-resource` methods, including nested object properties and arrays of objects. Array resources keep their empty-array default and object resources keep their initial `undefined` value.
+- Nullable primitive aliases preserve `null` in generated TypeScript, including string aliases.
+- `--include-tags` matching no operations now emits no operation models instead of including every schema. Webhook models remain available.
+
+Uses `MetaEngine.TypeScript.OpenApi.Angular` 1.4.3. Existing successful-response method signatures are unchanged.
+
 ## 1.4.1
 
 ### Bug Fixes
