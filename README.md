@@ -102,6 +102,12 @@ npx @metaengine/openapi-angular api.yaml ./src/app/api --provided-in any
 
 ---
 
+## HTTP QUERY
+
+Declare a `query` operation in an [OpenAPI 3.2 specification](https://spec.openapis.org/oas/v3.2.0.html#path-item-object). The generated client sends HTTP `QUERY` with the request body when one is defined.
+
+With `--date-transformation`, the generated client converts scalar date arrays and date fields inside nested arrays to `Date` objects. Null entries are preserved.
+
 ## CLI Options
 
 | Option | Description | Default |

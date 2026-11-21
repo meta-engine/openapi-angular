@@ -2,6 +2,16 @@
 
 See the [npm releases page](https://www.npmjs.com/package/@metaengine/openapi-angular?activeTab=versions) for detailed version history and changes.
 
+## 1.5.0
+
+### Features
+
+- Generate clients for OpenAPI 3.2 `query` operations, including their request bodies.
+
+### Bug Fixes
+
+- Fix `--date-transformation` for scalar date arrays and nested arrays containing date fields. Null entries are preserved.
+
 ## 1.4.2
 
 ### Bug Fixes
